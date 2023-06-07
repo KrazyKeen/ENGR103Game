@@ -1,7 +1,7 @@
 #include <Adafruit_CircuitPlayground.h>
 
-volatile bool measure[7][1];
-volatile bool measureCompare[7][1];
+volatile bool measure[7];
+volatile bool measureCompare[7];
 volatile bool check;
 volatile float time;
 volatile float bpm = 60.0;
@@ -24,23 +24,16 @@ void loop() {
   //generateMeasure();
   //testing for loop to set it all to right button and every beat
   for(int i =0; i<=8; i++){
-    for(int j = 0; j<=1; j++){
-      measure[i][j] = 1;
-    }
+      measure[i] = 1;
   }
   
   CircuitPlayground.playTone(400, 200); // start beep
   for(int i =0; i<8; i++){ //plays tones based on measure
-    if(measure[i][0]==1){
-      if(measure[i][1]==1){
+    if(measure[i]==1){
         CircuitPlayground.playTone(1080, 50);
-      }
-    if(measure[i][1]==0){
-      CircuitPlayground.playTone(700, 50);
+      delay(beatToTime()-50);
     }
-    delay(beatToTime()-50);
-    }
-    if(measure[i][0]==0){
+    if(measure[i]==0){
       delay(beatToTime());
     }
   }
@@ -54,35 +47,24 @@ void loop() {
   for(int i =0; i<8; i++){
     delay(beatToTime());
     if(flagLeft || flagRight){
-      measureCompare[i][0] = 1;
-      if(flagLeft == 1){
-        measureCompare[i][1] = 0;
-      }
-      if(flagRight == 1){
-        measureCompare[i][1] = 1;
-      }
+      measureCompare[i] = 1;
       flagLeft = 0;
       flagRight = 0;
     }
-    if(!flagLeft && !flagRight){
-      measureCompare[i][0] = 0;
+    else{
+      measureCompare[i] = 0;
     }
   }
   //check comparison
   Serial.println("start");
   for(int i =0; i<8; i++){
     Serial.print("Original: ");
-    Serial.print(measure[i][0]);
-    Serial.print(measure[i][1]);
+    Serial.print(measure[i]);
     Serial.print("   Played: ");
-    Serial.print(measureCompare[i][0]);
-    Serial.print(measureCompare[i][1]);
+    Serial.print(measureCompare[i]);
     Serial.print("   check: ");
     Serial.println(check);
-    if(measure[i][0] != measureCompare[i][0]){
-      check = false;
-    }
-    if(measure[i][1] != measureCompare[i][1]){
+    if(measure[i] != measureCompare[i]){
       check = false;
     }
   }
@@ -107,19 +89,14 @@ void loop() {
   }
   }
   for(int i =0; i<8; i++){
-    for(int j = 0; j<=1; j++){
-      measure[i][j] = 0;
-    }
+      measure[i] = 0;
   }
 }
 
 void generateMeasure(){
   for(int i= 0; i<8; i++){
     //for(int j = 0; j<2; j++){
-      measure[i][0] = random(0,2);
-      if(measure[i][0] == 1){
-        measure[i][1] = random(0,2);
-      }
+      measure[i] = random(0,2);
       //Serial.println(measure[i]);
     }
   }
