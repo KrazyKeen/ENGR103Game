@@ -1,7 +1,7 @@
 # ENGR103Game
 
 # Author
-  Krazy_Keen
+  Kayden Gupta
 # Edits
     # Created inital code.
 
